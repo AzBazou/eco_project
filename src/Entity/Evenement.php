@@ -56,6 +56,12 @@ class Evenement
     #[ORM\ManyToMany(targetEntity: Sponsor::class, inversedBy: 'evenements')]
     private Collection $sponsors;
 
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $latitude = null;
+
+    #[ORM\Column(type: 'float', nullable: true)]
+    private ?float $longitude = null;
+
     public function __construct()
     {
         $this->sponsors = new ArrayCollection();
@@ -158,12 +164,25 @@ class Evenement
         return $this;
     }
 
-    public function removeSponsor(Sponsor $sponsor): self
+    public function getLatitude(): ?float
     {
-        if ($this->sponsors->removeElement($sponsor)) {
-            $sponsor->removeEvenement($this);
-        }
+        return $this->latitude;
+    }
 
+    public function setLatitude(?float $latitude): self
+    {
+        $this->latitude = $latitude;
+        return $this;
+    }
+
+    public function getLongitude(): ?float
+    {
+        return $this->longitude;
+    }
+
+    public function setLongitude(?float $longitude): self
+    {
+        $this->longitude = $longitude;
         return $this;
     }
 }

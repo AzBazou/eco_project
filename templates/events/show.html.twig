@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+﻿{% extends 'base.html.twig' %}
 
 {% block title %}{{ event.nom }} - EcoSpot{% endblock %}
 
@@ -14,7 +14,7 @@
             {% else %}
             <div
                 style="width: 100%; height: 100%; background: linear-gradient(135deg, #4CAF50, #0d3b2f); display: flex; align-items: center; justify-content: center; font-size: 5rem;">
-                📅
+                
             </div>
             {% endif %}
             <div
@@ -29,7 +29,7 @@
                 style="display: flex; gap: 30px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; flex-wrap: wrap;">
                 {% if event.dateDebut %}
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.5rem;">📅</span>
+                    <span style="font-size: 1.5rem;"></span>
                     <div>
                         <div style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 600;">Date &
                             Time</div>
@@ -40,7 +40,7 @@
 
                 {% if event.lieu %}
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.5rem;">📍</span>
+                    <span style="font-size: 1.5rem;"></span>
                     <div>
                         <div style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 600;">
                             Location</div>
@@ -51,7 +51,7 @@
 
                 {% if event.capacite %}
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 1.5rem;">👥</span>
+                    <span style="font-size: 1.5rem;"></span>
                     <div>
                         <div style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 600;">
                             Capacity</div>
@@ -62,15 +62,15 @@
             </div>
 
             <!-- Map Section -->
-            {% if event.lieu %}
             <div style="margin-bottom: 30px;">
                 <h3 style="font-size: 1.2rem; color: #0d3b2f; margin-bottom: 15px;">Event Location</h3>
-                <div id="map" style="height: 300px; border-radius: 8px; border: 1px solid #eee; z-index: 1;"></div>
+                <div id="map" style="height: 350px; border-radius: 8px; border: 1px solid #eee; z-index: 1;"></div>
+                {% if event.lieu %}
                 <div style="margin-top: 10px; font-size: 0.9rem; color: #666;">
-                    <span>📍 {{ event.lieu }}</span>
+                    <span> {{ event.lieu }}</span>
                 </div>
+                {% endif %}
             </div>
-            {% endif %}
 
             <!-- Description -->
             <div style="margin-bottom: 40px;">
@@ -116,7 +116,7 @@
             <div style="margin-top: 40px; text-align: center;">
                 <a href="{{ path('app_events') }}"
                     style="display: inline-block; padding: 12px 30px; background: white; border: 1px solid #ddd; color: #666; text-decoration: none; border-radius: 30px; font-weight: 600; transition: all 0.3s ease;">
-                    ← Back to All Events
+                     Back to All Events
                 </a>
             </div>
 
@@ -126,56 +126,63 @@
 {% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 {% endblock %}
 
 {% block javascripts %}
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
     (function () {
         function initMap() {
             const mapContainer = document.getElementById('map');
             if (!mapContainer || mapContainer._leaflet_id) return;
 
-            const lieu = "{{ event.lieu|escape('js') }}";
-            const map = L.map('map').setView([34, 9], 6); // Default to Tunisia view
+            // Priority 1: Precise coordinates from database
+            const lat = {{ event.latitude|default('null') }};
+            const lng = {{ event.longitude|default('null') }};
+            const eventNom = "{{ event.nom|escape('js') }}";
+            const eventLieu = "{{ event.lieu|escape('js') }}";
+
+            // Initialize map (default to center if no coords)
+            const map = L.map('map').setView([lat || 48.8566, lng || 2.3522], lat ? 15 : 6);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            // Fetch location coordinates
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(lieu)}&limit=1`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        const lat = data[0].lat;
-                        const lon = data[0].lon;
+            if (lat && lng) {
+                // If we have precise coordinates, use them
+                L.marker([lat, lng]).addTo(map)
+                    .bindPopup(`<b>${eventNom}</b><br>${eventLieu}`)
+                    .openPopup();
+            } else if (eventLieu) {
+                // Fallback: Use nominatim search for the location name
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(eventLieu)}&limit=1`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.length > 0) {
+                            const nLat = data[0].lat;
+                            const nLon = data[0].lon;
+                            map.setView([nLat, nLon], 14);
+                            L.marker([nLat, nLon]).addTo(map)
+                                .bindPopup(`<b>${eventNom}</b><br>${data[0].display_name}`)
+                                .openPopup();
+                        }
+                    })
+                    .catch(err => console.error('Nominatim error:', err));
+            }
 
-                        map.setView([lat, lon], 14);
-                        L.marker([lat, lon]).addTo(map)
-                            .bindPopup(`<b>{{ event.nom|escape('js') }}</b><br>${data[0].display_name}`)
-                            .openPopup();
-
-                        // Fix gray background issue
-                        setTimeout(() => {
-                            map.invalidateSize();
-                        }, 200);
-                    }
-                })
-                .catch(err => console.error('Map error:', err));
+            // Fix gray background issue
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 200);
         }
 
-        // Run on normal load
         if (document.readyState === 'complete') {
             initMap();
         } else {
             window.addEventListener('load', initMap);
         }
-
-        // Run on Turbo load (Symfony UX)
         document.addEventListener('turbo:load', initMap);
     })();
 </script>

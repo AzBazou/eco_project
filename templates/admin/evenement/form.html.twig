@@ -32,7 +32,17 @@
         display: block;
         margin-top: 5px;
     }
+
+    #map {
+        height: 400px;
+        width: 100%;
+        border-radius: 8px;
+        margin-top: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+    }
 </style>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 {% endblock %}
 
 {% block admin_content %}
@@ -92,19 +102,29 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div>
-                <label class="form-label {% if errors.lieu|default(false) %}text-danger{% endif %}">Location</label>
+                <label class="form-label {% if errors.lieu|default(false) %}text-danger{% endif %}">Location
+                    Name</label>
                 <input type="text" name="lieu" value="{{ event.lieu|default('') }}"
-                    class="form-control {% if errors.lieu|default(false) %}is-invalid{% endif %}">
+                    class="form-control {% if errors.lieu|default(false) %}is-invalid{% endif %}" id="location-input">
                 {% if errors.lieu|default(false) %}<span class="error-message">{{ errors.lieu }}</span>{% endif %}
             </div>
 
             <div>
-                <label class="form-label {% if errors.capacite|default(false) %}text-danger{% endif %}">Capacity</label>
+                <label class="form-label">Capacity</label>
                 <input type="number" name="capacite" value="{{ event.capacite|default('0') }}"
                     class="form-control {% if errors.capacite|default(false) %}is-invalid{% endif %}">
                 {% if errors.capacite|default(false) %}<span class="error-message">{{ errors.capacite }}</span>{% endif
                 %}
             </div>
+        </div>
+
+        <div>
+            <label class="form-label">Precise Location (Click on the map)</label>
+            <div id="map"></div>
+            <input type="hidden" name="latitude" id="lat-input" value="{{ event.latitude|default('') }}">
+            <input type="hidden" name="longitude" id="lng-input" value="{{ event.longitude|default('') }}">
+            <p style="font-size: 0.8rem; color: #666; margin-top: 5px;">Drag the marker or click anywhere on the map to
+                set the exact coordinates.</p>
         </div>
 
         <div>
@@ -137,4 +157,56 @@
         </div>
     </form>
 </div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Default coordinates (Paris or last saved location)
+        var defaultLat = {{ event.latitude|default (48.8566)
+    }};
+    var defaultLng = {{ event.longitude|default (2.3522) }};
+    var zoomLevel = {{ event.latitude ?15: 6 }};
+
+    var map = L.map('map').setView([defaultLat, defaultLng], zoomLevel);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    var marker;
+
+    // If we already have coordinates, place the marker
+    {% if event.latitude and event.longitude %}
+    marker = L.marker([defaultLat, defaultLng], { draggable: true }).addTo(map);
+    {% endif %}
+
+    function updateInputs(lat, lng) {
+        document.getElementById('lat-input').value = lat.toFixed(6);
+        document.getElementById('lng-input').value = lng.toFixed(6);
+    }
+
+    map.on('click', function (e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+
+        if (marker) {
+            marker.setLatLng(e.latlng);
+        } else {
+            marker = L.marker(e.latlng, { draggable: true }).addTo(map);
+            marker.on('dragend', function (event) {
+                var position = marker.getLatLng();
+                updateInputs(position.lat, position.lng);
+            });
+        }
+        updateInputs(lat, lng);
+    });
+
+    if (marker) {
+        marker.on('dragend', function (event) {
+            var position = marker.getLatLng();
+            updateInputs(position.lat, position.lng);
+        });
+    }
+    });
+</script>
 {% endblock %}

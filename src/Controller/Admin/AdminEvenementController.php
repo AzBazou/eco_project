@@ -45,6 +45,11 @@ class AdminEvenementController extends AbstractController
             $event->setLieu($lieu);
             $event->setCapacite((int)$capacite);
             
+            $latitude = $request->request->get('latitude');
+            $longitude = $request->request->get('longitude');
+            if ($latitude !== null && $latitude !== '') $event->setLatitude((float)$latitude);
+            if ($longitude !== null && $longitude !== '') $event->setLongitude((float)$longitude);
+            
             if ($dateDebut) {
                 try {
                     $event->setDateDebut(new \DateTime($dateDebut));
@@ -166,6 +171,11 @@ class AdminEvenementController extends AbstractController
             $event->setDescription($description);
             $event->setLieu($lieu);
             $event->setCapacite((int)$capacite);
+            
+            $latitude = $request->request->get('latitude');
+            $longitude = $request->request->get('longitude');
+            if ($latitude !== null && $latitude !== '') $event->setLatitude((float)$latitude);
+            if ($longitude !== null && $longitude !== '') $event->setLongitude((float)$longitude);
             
             if ($dateDebut) {
                 try {
