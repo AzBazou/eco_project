@@ -1,0 +1,50 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <h1>Sponsors Management</h1>
+    <a href="{{ path('admin_sponsors_new') }}" class="admin-btn">+ New Sponsor</a>
+</div>
+
+{% if sponsors|length > 0 %}
+<div class="events-grid">
+    {% for sponsor in sponsors %}
+    <div class="event-card">
+        {% if sponsor.image %}
+        <img src="{{ sponsor.image }}" alt="{{ sponsor.nom }}" class="event-image"
+            style="object-fit: contain; padding: 20px; background: #fff;">
+        {% else %}
+        <div class="event-placeholder">🤝</div>
+        {% endif %}
+
+        <div class="event-content">
+            <h3 class="event-title">{{ sponsor.nom }}</h3>
+            <p class="event-desc">{{ sponsor.description|slice(0, 100) }}...</p>
+
+            <div class="event-meta">
+                <div class="meta-item" title="Sector">
+                    🏢 {{ sponsor.secteur }}
+                </div>
+                <div class="meta-item" title="Location">
+                    📍 {{ sponsor.localisation }}
+                </div>
+            </div>
+
+            <div class="event-actions">
+                <a href="{{ path('admin_sponsors_edit', {'id': sponsor.id}) }}" class="admin-btn">Edit</a>
+                <a href="{{ path('admin_sponsors_delete', {'id': sponsor.id}) }}" class="admin-btn admin-btn-danger"
+                    onclick="return confirm('Are you sure?');">Delete</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="stat-card" style="text-align: center; grid-column: 1 / -1;">
+    <div class="stat-card-icon">📭</div>
+    <h3>No sponsors found</h3>
+    <p>Get started by creating your first sponsor.</p>
+    <a href="{{ path('admin_sponsors_new') }}" class="admin-btn">Create First Sponsor</a>
+</div>
+{% endif %}
+{% endblock %}

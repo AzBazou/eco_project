@@ -1,0 +1,113 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <h1>{% if isEdit %}Edit{% else %}Create{% endif %} Sponsor</h1>
+</div>
+
+<div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    {% if errors is not empty %}
+    <div
+        style="background: #fee; border: 1px solid #fcc; color: #c00; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <strong>Please fix the following errors:</strong>
+        <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+            {% for message in errors %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <style>
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #0d3b2f;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .form-error-label {
+            color: #c00 !important;
+        }
+
+        .form-error-control {
+            border-color: #c00;
+            background: #fff8f8;
+        }
+    </style>
+
+    <form method="POST" enctype="multipart/form-data" novalidate style="display: grid; gap: 20px;">
+        <div class="form-group">
+            <label class="form-label {{ errors.nom|default(false) ? 'form-error-label' : '' }}">Sponsor Name</label>
+            <input type="text" name="nom" value="{{ sponsor.nom|default('') }}"
+                class="form-control {{ errors.nom|default(false) ? 'form-error-control' : '' }}">
+            {% if errors.nom|default(false) %}
+            <span style="color: #c00; font-size: 0.9em;">{{ errors.nom }}</span>
+            {% endif %}
+        </div>
+
+        <div class="form-group">
+            <label
+                class="form-label {{ errors.description|default(false) ? 'form-error-label' : '' }}">Description</label>
+            <textarea name="description" rows="5"
+                class="form-control {{ errors.description|default(false) ? 'form-error-control' : '' }}">{{ sponsor.description|default('') }}</textarea>
+            {% if errors.description|default(false) %}
+            <span style="color: #c00; font-size: 0.9em;">{{ errors.description }}</span>
+            {% endif %}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div class="form-group">
+                <label
+                    class="form-label {{ errors.localisation|default(false) ? 'form-error-label' : '' }}">Location</label>
+                <input type="text" name="localisation" value="{{ sponsor.localisation|default('') }}"
+                    class="form-control {{ errors.localisation|default(false) ? 'form-error-control' : '' }}">
+                {% if errors.localisation|default(false) %}
+                <span style="color: #c00; font-size: 0.9em;">{{ errors.localisation }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label {{ errors.image|default(false) ? 'form-error-label' : '' }}">Logo
+                    Upload</label>
+                {% if sponsor.image %}
+                <div style="margin-bottom: 10px;">
+                    <img src="{{ sponsor.image }}" alt="Current logo" style="height: 50px; object-fit: contain;">
+                </div>
+                {% endif %}
+                <input type="file" name="image" accept="image/*"
+                    class="form-control {{ errors.image|default(false) ? 'form-error-control' : '' }}"
+                    style="padding: 8px;">
+                {% if errors.image|default(false) %}
+                <span style="color: #c00; font-size: 0.9em;">{{ errors.image }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label {{ errors.secteur|default(false) ? 'form-error-label' : '' }}">Sector</label>
+            <input type="text" name="secteur" value="{{ sponsor.secteur|default('') }}"
+                class="form-control {{ errors.secteur|default(false) ? 'form-error-control' : '' }}">
+            {% if errors.secteur|default(false) %}
+            <span style="color: #c00; font-size: 0.9em;">{{ errors.secteur }}</span>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="admin-btn">{% if isEdit %}Update{% else %}Create{% endif %} Sponsor</button>
+            <a href="{{ path('admin_sponsors_index') }}" class="admin-btn admin-btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

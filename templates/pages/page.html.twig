@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ page.title|default('Page') }} - EcoSpot{% endblock %}
+{% block description %}{{ page.description|default(page.content|default('')|striptags|slice(0, 160)) }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="main-wrapper">
+        <main id="primary" class="site-main ct-post-wrapper">
+            <article class="page-content">
+                <h1 class="page-title">{{ page.title|default('Page') }}</h1>
+
+                <div class="page-body">
+                    {{ page.content|default('')|raw }}
+                </div>
+            </article>
+        </main>
+
+        {% include 'partials/sidebar.html.twig' %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Search Results - EcoSpot{% endblock %}
+{% block description %}Search results for "{{ query }}"{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="main-wrapper">
+        <main id="primary" class="site-main">
+            <header class="page-header">
+                <h1 class="page-title">
+                    {% if query %}
+                    Search Results for "{{ query }}"
+                    {% else %}
+                    Search
+                    {% endif %}
+                </h1>
+            </header>
+
+            {% if query %}
+            {% if results %}
+            <div class="search-results">
+                {% for result in results %}
+                <article class="search-result">
+                    <h2><a
+                            href="{% if result.type == 'post' %}{{ path('app_post_show', {'slug': result.slug}) }}{% else %}{{ path('app_page', {'slug': result.slug}) }}{% endif %}">{{
+                            result.title }}</a></h2>
+                    <p class="result-excerpt">{{ result.excerpt }}</p>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="no-results">
+                <p>No results found for "{{ query }}". Try a different search.</p>
+            </div>
+            {% endif %}
+            {% else %}
+            <div class="search-form-wrapper">
+                <form method="get" class="search-form" action="{{ path('app_search') }}">
+                    <input type="text" name="q" placeholder="Enter your search terms..." required>
+                    <button type="submit">Search</button>
+                </form>
+            </div>
+            {% endif %}
+        </main>
+
+        {% include 'partials/sidebar.html.twig' %}
+    </div>
+</div>
+{% endblock %}

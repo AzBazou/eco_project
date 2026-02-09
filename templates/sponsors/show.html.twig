@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ sponsor.nom }} - EcoSpot{% endblock %}
+
+{% block content %}
+<section class="sponsor-details-section" style="padding: 60px 0; background: #f9f9f9; min-height: 80vh;">
+    <div class="container"
+        style="max-width: 900px; margin: 0 auto; background: white; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden;">
+
+        <!-- Sponsor Header Area -->
+        <div class="sponsor-header"
+            style="padding: 60px 40px; background: linear-gradient(135deg, #0d3b2f 0%, #1a5f4a 100%); color: white; text-align: center;">
+            <div
+                style="width: 150px; height: 150px; margin: 0 auto 25px; border-radius: 50%; overflow: hidden; border: 5px solid rgba(255,255,255,0.2); background: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">
+                {% if sponsor.image %}
+                <img src="{{ sponsor.image }}" alt="{{ sponsor.nom }}"
+                    style="width: 100%; height: 100%; object-fit: cover;">
+                {% else %}
+                <span style="font-size: 4rem; color: #4CAF50;">{{ sponsor.nom|slice(0, 1)|upper }}</span>
+                {% endif %}
+            </div>
+            <h1 style="margin: 0; font-size: 2.8rem; font-weight: 700;">{{ sponsor.nom }}</h1>
+            <p
+                style="margin-top: 10px; font-size: 1.1rem; opacity: 0.9; font-weight: 500; text-transform: uppercase; letter-spacing: 2px;">
+                {{ sponsor.secteur }}</p>
+        </div>
+
+        <div style="padding: 50px 40px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 50px;">
+                <!-- Left Column: Description -->
+                <div>
+                    <h2
+                        style="font-size: 1.6rem; color: #0d3b2f; margin-bottom: 20px; border-bottom: 2px solid #4CAF50; padding-bottom: 10px; display: inline-block;">
+                        About the Sponsor</h2>
+                    <div style="font-size: 1.1rem; line-height: 1.8; color: #555;">
+                        {{ sponsor.description|nl2br }}
+                    </div>
+                </div>
+
+                <!-- Right Column: Info Card -->
+                <div>
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border: 1px solid #eee;">
+                        <h3 style="font-size: 1.2rem; color: #0d3b2f; margin-top: 0; margin-bottom: 20px;">Sponsor Info
+                        </h3>
+
+                        <div style="margin-bottom: 20px;">
+                            <div
+                                style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">
+                                Location</div>
+                            <div style="display: flex; align-items: center; gap: 10px; color: #333; font-weight: 600;">
+                                <span style="font-size: 1.2rem;">📍</span>
+                                {{ sponsor.localisation }}
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 0;">
+                            <div
+                                style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 700; margin-bottom: 5px;">
+                                Sector</div>
+                            <div style="display: flex; align-items: center; gap: 10px; color: #333; font-weight: 600;">
+                                <span style="font-size: 1.2rem;">🏢</span>
+                                {{ sponsor.secteur }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Sponsored by this Sponsor -->
+            {% if sponsor.evenements|length > 0 %}
+            <div style="margin-top: 60px;">
+                <h2 style="font-size: 1.6rem; color: #0d3b2f; margin-bottom: 30px; text-align: center;">Events Supported
+                    by {{ sponsor.nom }}</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px;">
+                    {% for event in sponsor.evenements %}
+                    <a href="{{ path('app_events_show', {'id': event.id}) }}"
+                        style="text-decoration: none; color: inherit; group">
+                        <div style="background: white; border-radius: 10px; border: 1px solid #eee; overflow: hidden; transition: all 0.3s ease; height: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.02);"
+                            onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.05)';"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.02)';">
+                            <div style="height: 140px; overflow: hidden;">
+                                {% if event.image %}
+                                <img src="{{ event.image }}" alt="{{ event.nom }}"
+                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <div
+                                    style="width: 100%; height: 100%; background: #4CAF50; display: flex; align-items: center; justify-content: center; font-size: 2.5rem;">
+                                    📅</div>
+                                {% endif %}
+                            </div>
+                            <div style="padding: 15px;">
+                                <h4 style="margin: 0 0 5px 0; font-size: 1.1rem; color: #0d3b2f;">{{ event.nom }}</h4>
+                                <div style="font-size: 0.85rem; color: #888;">{{ event.dateDebut|date('M d, Y') }}</div>
+                            </div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div style="margin-top: 50px; text-align: center; border-top: 1px solid #eee; padding-top: 30px;">
+                <a href="{{ path('app_events') }}"
+                    style="display: inline-block; padding: 12px 30px; background: white; border: 1px solid #ddd; color: #666; text-decoration: none; border-radius: 30px; font-weight: 600; transition: all 0.3s ease;">
+                    ← Back to Events
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

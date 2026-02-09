@@ -1,0 +1,428 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home - EcoSpot - Ecology & Environment{% endblock %}
+
+{% block stylesheets %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .eco-hero {
+        background: linear-gradient(135deg, #0d3b2f 0%, #1a5f4a 50%, #0d3b2f 100%);
+        color: white;
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .eco-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M0,50 Q300,0 600,50 T1200,50 L1200,120 L0,120 Z" fill="rgba(255,255,255,0.05)"/></svg>');
+        background-size: 600px 120px;
+        background-repeat: repeat-x;
+        animation: wave 15s linear infinite;
+    }
+
+    @keyframes wave {
+        0% {
+            transform: translateX(0);
+        }
+
+        100% {
+            transform: translateX(600px);
+        }
+    }
+
+    .eco-hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 800px;
+        text-align: center;
+        margin: 0 auto;
+    }
+
+    .eco-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .eco-hero p {
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+        opacity: 0.95;
+        line-height: 1.6;
+    }
+
+    .eco-cta-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .eco-btn {
+        padding: 14px 35px;
+        font-size: 1rem;
+        border-radius: 5px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        cursor: pointer;
+        display: inline-block;
+    }
+
+    .eco-btn-primary {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .eco-btn-primary:hover {
+        background: #45a049;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .eco-btn-secondary {
+        background: transparent;
+        color: white;
+        border-color: white;
+    }
+
+    .eco-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .features-section {
+        background: #f8f8f8;
+        padding: 100px 0;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+        margin-top: 60px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 40px;
+        border-radius: 10px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 20px;
+        background: #4CAF50;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+    }
+
+    .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #0d3b2f;
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .about-section {
+        padding: 100px 0;
+        background: white;
+    }
+
+    .about-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+    }
+
+    .about-text h2 {
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        color: #0d3b2f;
+    }
+
+    .about-text p {
+        font-size: 1.05rem;
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .about-image {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .about-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .blog-section {
+        background: #f8f8f8;
+        padding: 100px 0;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        color: #0d3b2f;
+        margin-bottom: 15px;
+    }
+
+    .section-title p {
+        font-size: 1.1rem;
+        color: #666;
+    }
+
+    .posts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+    }
+
+    .post-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .post-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .post-content {
+        padding: 25px;
+    }
+
+    .post-content h3 {
+        font-size: 1.3rem;
+        margin-bottom: 10px;
+        color: #0d3b2f;
+    }
+
+    .post-meta {
+        font-size: 0.9rem;
+        color: #999;
+        margin-bottom: 15px;
+    }
+
+    .post-excerpt {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    .read-more {
+        color: #4CAF50;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .read-more:hover {
+        color: #45a049;
+    }
+
+    .cta-section {
+        background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%);
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+    }
+
+    .cta-section h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+    }
+
+    .cta-section p {
+        font-size: 1.1rem;
+        margin-bottom: 30px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @media (max-width: 768px) {
+        .eco-hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .about-content {
+            grid-template-columns: 1fr;
+        }
+
+        .eco-cta-buttons {
+            flex-direction: column;
+        }
+
+        .eco-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="eco-hero">
+    <div class="container">
+        <div class="eco-hero-content">
+            <h1>Save the Environment, Save the World</h1>
+            <p>Join us in our mission to protect our planet through ecology and environmental conservation awareness.
+            </p>
+            <div class="eco-cta-buttons">
+                <a href="{{ path('app_archive') }}" class="eco-btn eco-btn-primary">Learn More</a>
+                <a href="{{ path('app_shop') }}" class="eco-btn eco-btn-secondary">Shop Now</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Why Choose EcoSpot?</h2>
+            <p>We're committed to environmental sustainability and education</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Global Impact</h3>
+                <p>Our initiatives reach across the globe, creating positive environmental change and sustainable
+                    practices worldwide.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">♻️</div>
+                <h3>Sustainable Living</h3>
+                <p>We promote eco-friendly products and practices that help you live a more sustainable lifestyle.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌱</div>
+                <h3>Green Solutions</h3>
+                <p>Discover innovative solutions for environmental challenges and conservation efforts.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>About EcoSpot</h2>
+                <p>EcoSpot is dedicated to promoting ecology and environmental consciousness. Our mission is to inspire
+                    individuals and communities to take action for a sustainable future.</p>
+                <p>Through education, advocacy, and sustainable products, we work towards preserving our planet's
+                    biodiversity and natural resources for future generations.</p>
+                <p>Join us in making a difference through informed choices and environmental stewardship.</p>
+                <a href="{{ path('app_page', {'slug': 'about'}) }}" class="eco-btn eco-btn-primary"
+                    style="margin-top: 20px;">Learn More About Us</a>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=500&h=500&fit=crop"
+                    alt="Nature and Environment">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Blog Posts -->
+<section class="blog-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Latest From Our Blog</h2>
+            <p>Stay informed about ecology, conservation, and environmental news</p>
+        </div>
+
+        <div class="posts-grid">
+            {% for post in posts|default([]) %}
+            <div class="post-card">
+                {% if post.thumbnail|default %}
+                <img src="{{ post.thumbnail }}" alt="{{ post.title|default('Post') }}">
+                {% else %}
+                <div
+                    style="width: 100%; height: 200px; background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">
+                    🌿
+                </div>
+                {% endif %}
+                <div class="post-content">
+                    <h3>{{ post.title|default('Post Title') }}</h3>
+                    <div class="post-meta">
+                        {{ post.date|default('now')|date('F j, Y') }}
+                        {% if post.author|default %} • {{ post.author }}{% endif %}
+                    </div>
+                    <p class="post-excerpt">{{ post.excerpt|default(post.content|default('No
+                        excerpt')|striptags|slice(0, 120) ~ '...') }}</p>
+                    <a href="{{ path('app_post_show', {'slug': post.slug|default('post')}) }}" class="read-more">Read
+                        More →</a>
+                </div>
+            </div>
+            {% else %}
+            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                <p style="font-size: 1.1rem; color: #999;">No blog posts yet. Check back soon!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2>Join Our Community Today</h2>
+        <p>Be part of the global movement towards environmental sustainability. Together, we can make a difference.</p>
+        <a href="{{ path('app_shop') }}" class="eco-btn eco-btn-primary">Explore Our Products</a>
+    </div>
+</section>
+
+{% endblock %}

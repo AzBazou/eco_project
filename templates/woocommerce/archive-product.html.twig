@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Shop - WooCommerce{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="main-wrapper">
+        <main id="primary" class="site-main">
+            <h1 class="page-title">Shop</h1>
+
+            <div class="products-grid">
+                {% for product in products %}
+                    <div class="product-card">
+                        <div class="product-image">
+                            <a href="{{ path('app_product_show', {'slug': product.slug}) }}">
+                                {% if product.image %}
+                                    <img src="{{ product.image }}" alt="{{ product.title }}">
+                                {% else %}
+                                    <div class="placeholder-image">No Image</div>
+                                {% endif %}
+                            </a>
+                        </div>
+
+                        <div class="product-info">
+                            <h2 class="product-title">
+                                <a href="{{ path('app_product_show', {'slug': product.slug}) }}">{{ product.title }}</a>
+                            </h2>
+
+                            <div class="product-price">
+                                ${{ product.price }}
+                            </div>
+
+                            <p class="product-description">{{ product.description }}</p>
+
+                            <a href="{{ path('app_product_show', {'slug': product.slug}) }}" class="button view-details">View Details</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </main>
+
+        {% include 'partials/sidebar.html.twig' %}
+    </div>
+</div>
+{% endblock %}

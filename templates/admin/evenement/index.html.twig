@@ -1,0 +1,322 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block admin_content %}
+<style>
+    .events-container {
+        background: #f5f7fa;
+        min-height: 100vh;
+        padding: 30px;
+    }
+
+    .events-header-section {
+        margin-bottom: 40px;
+    }
+
+    .events-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .events-header-top h1 {
+        font-size: 2.2rem;
+        color: #0d3b2f;
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .events-header-top p {
+        font-size: 0.95rem;
+        color: #666;
+        margin: 0;
+    }
+
+    .new-event-btn {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .new-event-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(76, 175, 80, 0.3);
+    }
+
+    .events-count {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 8px;
+    }
+
+    .admin-events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .admin-event-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e8eef5;
+    }
+
+    .admin-event-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        border-color: #4CAF50;
+    }
+
+    .admin-event-image {
+        width: 100%;
+        height: 150px;
+        overflow: hidden;
+        background: #f0f0f0;
+        position: relative;
+    }
+
+    .admin-event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .admin-event-card:hover .admin-event-image img {
+        transform: scale(1.05);
+    }
+
+    .admin-event-placeholder {
+        width: 100%;
+        height: 150px;
+        background: linear-gradient(135deg, #4CAF50 0%, #0d3b2f 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+    }
+
+    .admin-event-body {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .admin-event-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #0d3b2f;
+        margin-bottom: 6px;
+        word-break: break-word;
+        line-height: 1.3;
+    }
+
+    .admin-event-description {
+        font-size: 0.8rem;
+        color: #888;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .admin-event-meta {
+        font-size: 0.75rem;
+        color: #aaa;
+        margin-bottom: 15px;
+        flex: 1;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 12px;
+    }
+
+    .admin-event-meta-item {
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .admin-event-meta-item strong {
+        color: #666;
+        min-width: 45px;
+    }
+
+    .admin-event-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: auto;
+    }
+
+    .admin-event-actions a {
+        flex: 1;
+        padding: 8px 12px;
+        border-radius: 5px;
+        text-align: center;
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: none;
+        display: block;
+    }
+
+    .edit-action {
+        background: #4CAF50;
+        color: white;
+    }
+
+    .edit-action:hover {
+        background: #45a049;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(76, 175, 80, 0.25);
+    }
+
+    .delete-action {
+        background: #f8f9fa;
+        color: #d9534f;
+        border: 1.5px solid #d9534f;
+    }
+
+    .delete-action:hover {
+        background: #d9534f;
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(217, 83, 79, 0.25);
+    }
+
+    .no-events-msg {
+        text-align: center;
+        padding: 80px 40px;
+        background: white;
+        border-radius: 10px;
+        border: 2px dashed #ddd;
+    }
+
+    .no-events-msg p {
+        font-size: 1.1rem;
+        color: #999;
+        margin: 0 0 25px 0;
+    }
+
+    .no-events-msg .new-event-btn {
+        display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+        .events-header-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .new-event-btn {
+            margin-top: 15px;
+        }
+
+        .admin-events-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="events-container">
+    <div class="events-header-section">
+        <div class="events-header-top">
+            <div>
+                <h1>📅 Events Management</h1>
+                <p class="events-count">Manage and organize all your environmental events</p>
+            </div>
+            <a href="{{ path('admin_events_new') }}" class="new-event-btn">+ New Event</a>
+        </div>
+    </div>
+
+    {% if events|length > 0 %}
+    <div class="admin-events-grid">
+        {% for event in events %}
+        <div class="admin-event-card">
+            {% if event.image %}
+            <div class="admin-event-image">
+                <img src="{{ event.image }}" alt="{{ event.nom }}">
+            </div>
+            {% else %}
+            <div class="admin-event-placeholder">📅</div>
+            {% endif %}
+
+            <div class="admin-event-body">
+                <h3 class="admin-event-title">{{ event.nom }}</h3>
+
+                <p class="admin-event-description">{{ event.description }}</p>
+
+                <div class="admin-event-meta">
+                    {% if event.dateDebut %}
+                    <div class="admin-event-meta-item">
+                        <span style="font-size: 1.2em;">🗓️</span> {{ event.dateDebut|date('M d, Y') }}
+                    </div>
+                    {% endif %}
+                    {% if event.lieu %}
+                    <div class="admin-event-meta-item">
+                        <span style="font-size: 1.2em;">📍</span> {{ event.lieu }}
+                    </div>
+                    {% endif %}
+                    {% if event.capacite %}
+                    <div class="admin-event-meta-item">
+                        <span style="font-size: 1.2em;">👥</span> {{ event.capacite }} people
+                    </div>
+                    {% endif %}
+
+                    {% if event.sponsors|length > 0 %}
+                    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee;">
+                        <div
+                            style="font-size: 0.75rem; font-weight: 600; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Sponsored By</div>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            {% for sponsor in event.sponsors %}
+                            <div title="{{ sponsor.nom }}"
+                                style="width: 24px; height: 24px; border-radius: 50%; overflow: hidden; border: 1px solid #ddd; background: white; display: flex; align-items: center; justify-content: center;">
+                                {% if sponsor.image %}
+                                <img src="{{ sponsor.image }}" alt="{{ sponsor.nom }}"
+                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <span style="font-size: 10px;">{{ sponsor.nom|slice(0, 1)|upper }}</span>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="admin-event-actions">
+                    <a href="{{ path('admin_events_edit', {id: event.id}) }}" class="edit-action">Edit</a>
+                    <a href="{{ path('admin_events_delete', {id: event.id}) }}" class="delete-action"
+                        onclick="return confirm('Are you sure you want to delete this event?');">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-events-msg">
+        <p>No events created yet</p>
+        <a href="{{ path('admin_events_new') }}" class="new-event-btn">Create Your First Event</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

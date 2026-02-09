@@ -1,0 +1,496 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Events - EcoSpot{% endblock %}
+{% block description %}Join our environmental events and fundraising campaigns{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .events-header {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1200&fit=crop');
+        background-size: cover;
+        background-position: center;
+        padding: 100px 0;
+        color: white;
+        text-align: center;
+    }
+
+    .events-header h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .breadcrumb {
+        font-size: 1.1rem;
+    }
+
+    .breadcrumb a {
+        color: #4CAF50;
+        text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
+
+    .events-section {
+        padding: 80px 0;
+        background: #f8f8f8;
+    }
+
+    .section-title {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .section-title h2 {
+        font-size: 2.5rem;
+        color: #0d3b2f;
+        margin-bottom: 15px;
+    }
+
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+    }
+
+    .event-card {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+
+    .event-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .event-image {
+        width: 100%;
+        height: 220px;
+        overflow: hidden;
+    }
+
+    .event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .event-card:hover .event-image img {
+        transform: scale(1.05);
+    }
+
+    .event-content {
+        padding: 30px;
+    }
+
+    .event-title {
+        font-size: 1.3rem;
+        color: #0d3b2f;
+        margin-bottom: 10px;
+        font-weight: 600;
+    }
+
+    .event-description {
+        color: #666;
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+        line-height: 1.6;
+    }
+
+    .event-progress {
+        margin-bottom: 20px;
+    }
+
+    .progress-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        font-size: 0.85rem;
+        color: #999;
+        font-weight: 600;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4CAF50, #45a049);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    .event-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding: 15px 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: #999;
+        text-transform: uppercase;
+    }
+
+    .stat-value {
+        font-size: 1.3rem;
+        color: #0d3b2f;
+        font-weight: 700;
+    }
+
+    .event-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 15px 0;
+        border-top: 1px solid #eee;
+        font-size: 0.85rem;
+        color: #666;
+    }
+
+    .event-date {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .event-location {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .event-capacity {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .pagination-container .pagination {
+        display: flex;
+        gap: 10px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .pagination-container .page-item .page-link {
+        padding: 10px 18px;
+        border-radius: 50%;
+        border: 1px solid #ddd;
+        color: #0d3b2f;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .pagination-container .page-item.active .page-link {
+        background: #4CAF50;
+        color: white;
+        border-color: #4CAF50;
+    }
+
+    .pagination-container .page-item .page-link:hover:not(.active) {
+        background: #f0f0f0;
+        transform: translateY(-2px);
+    }
+
+    /* Redesigned Search Bar - Clean & Minimalist */
+    .search-wrapper {
+        max-width: 650px;
+        margin: -35px auto 60px;
+        padding: 0 20px;
+        position: relative;
+    }
+
+    .search-pill {
+        display: flex;
+        align-items: center;
+        background: #ffffff;
+        border-radius: 50px;
+        padding: 6px 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .search-pill:focus-within {
+        border-color: #4CAF50;
+        box-shadow: 0 15px 35px rgba(76, 175, 80, 0.08);
+        transform: translateY(-2px);
+    }
+
+    .search-input {
+        flex: 1;
+        border: none !important;
+        padding: 12px 10px;
+        font-size: 1.05rem;
+        outline: none !important;
+        box-shadow: none !important;
+        color: #1a202c;
+        background: transparent !important;
+        font-family: inherit;
+    }
+
+    .search-input::placeholder {
+        color: #94a3b8;
+        font-weight: 400;
+    }
+
+    .search-icon-box {
+        color: #4CAF50;
+        font-size: 1.1rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .search-loader {
+        display: none;
+        color: #4CAF50;
+        animation: spin 0.8s linear infinite;
+        font-size: 1.1rem;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .search-meta {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 0.9rem;
+        color: #64748b;
+        letter-spacing: 0.3px;
+    }
+
+    /* Content Transitions */
+    #events-list-wrapper {
+        transition: all 0.4s ease;
+    }
+
+    #events-list-wrapper.is-loading {
+        opacity: 0.4;
+        filter: blur(2px);
+        pointer-events: none;
+    }
+
+    @media (max-width: 768px) {
+        .events-header h1 {
+            font-size: 2rem;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Events Header -->
+<section class="events-header">
+    <div class="container">
+        <h1>Events & Campaigns</h1>
+        <div class="breadcrumb">
+            <a href="{{ path('app_index') }}">Home</a> // Events
+        </div>
+    </div>
+</section>
+
+<!-- Events Section -->
+<section class="events-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Supporting Our Environmental Fundraising Initiatives</h2>
+        </div>
+
+        <div class="search-wrapper">
+            <div class="search-pill">
+                <div class="search-icon-box" id="search-status-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="search-loader" id="search-loader">
+                    <i class="fas fa-circle-notch"></i>
+                </div>
+                <input type="text" id="live-search-input" value="{{ app.request.query.get('q') }}"
+                    placeholder="Find your next environmental event..." class="search-input" autocomplete="off">
+            </div>
+            <div id="search-feedback" class="search-meta">
+                {% if app.request.query.get('q') %}
+                Results for "<strong>{{ app.request.query.get('q') }}</strong>"
+                | <a href="{{ path('app_events') }}"
+                    style="color: #4CAF50; text-decoration: none; font-weight: 600;">Clear</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="events-list-wrapper">
+            <div class="events-grid">
+                {% for event in events %}
+                <a href="{{ path('app_events_show', {'id': event.id}) }}" class="event-card-link"
+                    style="text-decoration: none; color: inherit;">
+                    <div class="event-card">
+                        <div class="event-image">
+                            {% if event.image %}
+                            <img src="{{ event.image }}" alt="{{ event.nom }}">
+                            {% else %}
+                            <div
+                                style="width: 100%; height: 220px; background: linear-gradient(135deg, #4CAF50, #0d3b2f); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+                                📅</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="event-content">
+                            <h3 class="event-title">{{ event.nom }}</h3>
+
+                            <p class="event-description">{{ event.description|slice(0, 100) }}...</p>
+
+                            <div class="event-meta">
+                                {% if event.dateDebut %}
+                                <div class="event-date">
+                                    <span>📅</span>
+                                    <span>{{ event.dateDebut|date('M d, Y') }}</span>
+                                </div>
+                                {% endif %}
+                                {% if event.lieu %}
+                                <div class="event-location">
+                                    <span>📍</span>
+                                    <span>{{ event.lieu }}</span>
+                                </div>
+                                {% endif %}
+                                {% if event.capacite %}
+                                <div class="event-capacity">
+                                    <span>👥</span>
+                                    <span>{{ event.capacite }} people</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            {% if event.sponsors|length > 0 %}
+                            <div style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #eee;">
+                                <div
+                                    style="font-size: 0.75rem; font-weight: 600; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Sponsored By</div>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    {% for sponsor in event.sponsors %}
+                                    <div title="{{ sponsor.nom }}"
+                                        style="width: 24px; height: 24px; border-radius: 50%; overflow: hidden; border: 1px solid #ddd; background: white; display: flex; align-items: center; justify-content: center;">
+                                        {% if sponsor.image %}
+                                        <img src="{{ sponsor.image }}" alt="{{ sponsor.nom }}"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                        {% else %}
+                                        <span style="font-size: 10px;">{{ sponsor.nom|slice(0, 1)|upper }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+                {% else %}
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <p style="font-size: 1.1rem; color: #999;">No events available at this time.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="pagination-container" style="margin-top: 50px; display: flex; justify-content: center;">
+                {{ knp_pagination_render(events) }}
+            </div>
+        </div>
+</section>
+
+{% block javascripts %}
+<script>
+    (function () {
+        let timer;
+        const input = document.getElementById('live-search-input');
+        const wrapper = document.getElementById('events-list-wrapper');
+        const loader = document.getElementById('search-loader');
+        const statusIcon = document.getElementById('search-status-icon');
+        const feedback = document.getElementById('search-feedback');
+
+        function fetchResults() {
+            const query = input.value.trim();
+            const url = new URL(window.location.href);
+
+            loader.style.display = 'block';
+            statusIcon.style.display = 'none';
+            wrapper.classList.add('is-loading');
+
+            if (query) {
+                url.searchParams.set('q', query);
+                url.searchParams.delete('page');
+            } else {
+                url.searchParams.delete('q');
+            }
+
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.querySelector('#events-list-wrapper');
+
+                    if (newContent) {
+                        wrapper.innerHTML = newContent.innerHTML;
+                        if (query) {
+                            feedback.innerHTML = `Results for "<strong>${query}</strong>" | <a href="/events" onclick="event.preventDefault(); document.getElementById('live-search-input').value=''; performSearch();" style="color: #4CAF50; text-decoration: none; font-weight: 600;">Clear</a>`;
+                        } else {
+                            feedback.innerHTML = '';
+                        }
+                    }
+                    window.history.pushState({}, '', url);
+                })
+                .catch(e => console.error(e))
+                .finally(() => {
+                    loader.style.display = 'none';
+                    statusIcon.style.display = 'block';
+                    wrapper.classList.remove('is-loading');
+                });
+        }
+
+        window.performSearch = fetchResults; // Expose for the "Clear" link
+
+        if (input) {
+            input.addEventListener('input', () => {
+                clearTimeout(timer);
+                timer = setTimeout(fetchResults, 400);
+            });
+        }
+    })();
+</script>
+{% endblock %}
+
+{% endblock %}

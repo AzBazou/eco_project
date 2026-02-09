@@ -1,0 +1,32 @@
+<article class="post-item {% if post.format|default %}post-format-{{ post.format }}{% endif %}">
+    <div class="post-card">
+        {% if post.thumbnail|default %}
+            <div class="post-thumbnail">
+                <a href="{{ path('app_post_show', {'slug': post.slug|default('post')}) }}">
+                    <img src="{{ post.thumbnail }}" alt="{{ post.title|default('Post') }}">
+                </a>
+            </div>
+        {% else %}
+            <div class="post-thumbnail" style="background: linear-gradient(135deg, #4CAF50 0%, #2e7d32 100%); height: 200px; display: flex; align-items: center; justify-content: center;">
+                <span style="color: white; font-size: 3rem;">🌿</span>
+            </div>
+        {% endif %}
+
+        <div class="post-content">
+            <h2 class="post-title">
+                <a href="{{ path('app_post_show', {'slug': post.slug|default('post')}) }}">{{ post.title|default('Post') }}</a>
+            </h2>
+
+            <div class="post-meta">
+                <span class="post-date">{{ post.date|default('now')|date('F j, Y') }}</span>
+                {% if post.author|default %}<span class="post-author">{{ post.author }}</span>{% endif %}
+            </div>
+
+            <div class="post-excerpt">
+                {{ post.excerpt|default(post.content|default('')|striptags|slice(0, 150) ~ '...') }}
+            </div>
+
+            <a href="{{ path('app_post_show', {'slug': post.slug|default('post')}) }}" class="read-more">Read More →</a>
+        </div>
+    </div>
+</article>

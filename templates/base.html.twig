@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EcoSpot{% endblock %}</title>
+    <meta name="description" content="{% block description %}{% endblock %}">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/additional.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    {% block stylesheets %}{% endblock %}
+</head>
+
+<body>
+    {% include 'partials/preloader.html.twig' %}
+
+    {% include 'partials/header.html.twig' %}
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'partials/footer.html.twig' %}
+
+    <!-- Scripts -->
+    {{ importmap('app') }}
+    <script src="{{ asset('js/custom.js') }}" defer></script>
+    <script src="{{ asset('js/navigation.js') }}" defer></script>
+
+    {% block javascripts %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ event.nom }} - EcoSpot{% endblock %}
+
+{% block content %}
+<section class="event-details-section" style="padding: 60px 0; background: #f9f9f9; min-height: 80vh;">
+    <div class="container"
+        style="max-width: 900px; margin: 0 auto; background: white; padding: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border-radius: 12px; overflow: hidden;">
+
+        <!-- Event Image Header -->
+        <div class="event-header-image" style="width: 100%; height: 350px; position: relative;">
+            {% if event.image %}
+            <img src="{{ event.image }}" alt="{{ event.nom }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+            <div
+                style="width: 100%; height: 100%; background: linear-gradient(135deg, #4CAF50, #0d3b2f); display: flex; align-items: center; justify-content: center; font-size: 5rem;">
+                📅
+            </div>
+            {% endif %}
+            <div
+                style="position: absolute; bottom: 0; left: 0; right: 0; padding: 30px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); color: white;">
+                <h1 style="margin: 0; font-size: 2.5rem; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">{{ event.nom }}</h1>
+            </div>
+        </div>
+
+        <div style="padding: 40px;">
+            <!-- Event Meta Info Bar -->
+            <div
+                style="display: flex; gap: 30px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; flex-wrap: wrap;">
+                {% if event.dateDebut %}
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">📅</span>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 600;">Date &
+                            Time</div>
+                        <div style="font-weight: 600; color: #0d3b2f;">{{ event.dateDebut|date('F d, Y h:i A') }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if event.lieu %}
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">📍</span>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 600;">
+                            Location</div>
+                        <div style="font-weight: 600; color: #0d3b2f;">{{ event.lieu }}</div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if event.capacite %}
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.5rem;">👥</span>
+                    <div>
+                        <div style="font-size: 0.8rem; color: #888; text-transform: uppercase; font-weight: 600;">
+                            Capacity</div>
+                        <div style="font-weight: 600; color: #0d3b2f;">{{ event.capacite }} Participants</div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Map Section -->
+            {% if event.lieu %}
+            <div style="margin-bottom: 30px;">
+                <h3 style="font-size: 1.2rem; color: #0d3b2f; margin-bottom: 15px;">Event Location</h3>
+                <div id="map" style="height: 300px; border-radius: 8px; border: 1px solid #eee; z-index: 1;"></div>
+                <div style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                    <span>📍 {{ event.lieu }}</span>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Description -->
+            <div style="margin-bottom: 40px;">
+                <h2 style="font-size: 1.5rem; color: #0d3b2f; margin-bottom: 15px;">About this Event</h2>
+                <div style="font-size: 1.1rem; line-height: 1.8; color: #555;">
+                    {{ event.description|nl2br }}
+                </div>
+            </div>
+
+            <!-- Sponsors Section -->
+            {% if event.sponsors|length > 0 %}
+            <div style="margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 8px;">
+                <h3 style="font-size: 1.2rem; margin-top: 0; margin-bottom: 20px; color: #0d3b2f; text-align: center;">
+                    Proudly Sponsored By</h3>
+                <div style="display: flex; gap: 40px; justify-content: center; flex-wrap: wrap;">
+                    {% for sponsor in event.sponsors %}
+                    <a href="{{ path('app_sponsors_show', {'id': sponsor.id}) }}"
+                        style="text-decoration: none; color: inherit; display: block; transition: transform 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)';" onmouseout="this.style.transform='scale(1)';">
+                        <div style="text-align: center; width: 120px;">
+                            <div
+                                style="width: 100px; height: 100px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; border: 4px solid #fff; box-shadow: 0 6px 15px rgba(0,0,0,0.1); background: white; display: flex; align-items: center; justify-content: center;">
+                                {% if sponsor.image %}
+                                <img src="{{ sponsor.image }}" alt="{{ sponsor.nom }}"
+                                    style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                <span style="font-size: 35px; color: #4CAF50;">{{ sponsor.nom|slice(0, 1)|upper
+                                    }}</span>
+                                {% endif %}
+                            </div>
+                            <div style="font-weight: 700; color: #0d3b2f; margin-bottom: 2px;">{{ sponsor.nom }}</div>
+                            <div
+                                style="font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px;">
+                                {{ sponsor.secteur }}</div>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Actions -->
+            <div style="margin-top: 40px; text-align: center;">
+                <a href="{{ path('app_events') }}"
+                    style="display: inline-block; padding: 12px 30px; background: white; border: 1px solid #ddd; color: #666; text-decoration: none; border-radius: 30px; font-weight: 600; transition: all 0.3s ease;">
+                    ← Back to All Events
+                </a>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    (function () {
+        function initMap() {
+            const mapContainer = document.getElementById('map');
+            if (!mapContainer || mapContainer._leaflet_id) return;
+
+            const lieu = "{{ event.lieu|escape('js') }}";
+            const map = L.map('map').setView([34, 9], 6); // Default to Tunisia view
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Fetch location coordinates
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(lieu)}&limit=1`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        const lat = data[0].lat;
+                        const lon = data[0].lon;
+
+                        map.setView([lat, lon], 14);
+                        L.marker([lat, lon]).addTo(map)
+                            .bindPopup(`<b>{{ event.nom|escape('js') }}</b><br>${data[0].display_name}`)
+                            .openPopup();
+
+                        // Fix gray background issue
+                        setTimeout(() => {
+                            map.invalidateSize();
+                        }, 200);
+                    }
+                })
+                .catch(err => console.error('Map error:', err));
+        }
+
+        // Run on normal load
+        if (document.readyState === 'complete') {
+            initMap();
+        } else {
+            window.addEventListener('load', initMap);
+        }
+
+        // Run on Turbo load (Symfony UX)
+        document.addEventListener('turbo:load', initMap);
+    })();
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Blog Archive - EcoSpot{% endblock %}
+{% block description %}Read our latest blog posts about ecology and environment.{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="main-wrapper">
+        <main id="primary" class="site-main">
+            <header class="page-header">
+                <h1 class="page-title">Blog Posts</h1>
+            </header>
+
+            <div class="posts-grid">
+                {% for post in posts %}
+                {% include 'post/content.html.twig' %}
+                {% else %}
+                {% include 'post/content-none.html.twig' %}
+                {% endfor %}
+            </div>
+
+            <!-- Pagination -->
+            {% if total > postsPerPage %}
+            <nav class="pagination">
+                {% if page > 1 %}
+                <a href="{{ path('app_archive', {'page': page - 1}) }}" class="prev">Previous</a>
+                {% endif %}
+
+                {% set totalPages = ((total + postsPerPage - 1) / postsPerPage)|round(0, 'floor') %}
+                {% for i in 1..totalPages %}
+                {% if i == page %}
+                <span class="current">{{ i }}</span>
+                {% else %}
+                <a href="{{ path('app_archive', {'page': i}) }}">{{ i }}</a>
+                {% endif %}
+                {% endfor %}
+
+                {% if page < totalPages %} <a href="{{ path('app_archive', {'page': page + 1}) }}" class="next">Next</a>
+                    {% endif %}
+            </nav>
+            {% endif %}
+        </main>
+
+        {% include 'partials/sidebar.html.twig' %}
+    </div>
+</div>
+{% endblock %}

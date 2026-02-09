@@ -1,0 +1,140 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .form-control.is-invalid {
+        border-color: #c00;
+        background-color: #fff8f8;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #0d3b2f;
+    }
+
+    .form-label.text-danger {
+        color: #c00 !important;
+    }
+
+    .error-message {
+        color: #c00;
+        font-size: 0.9em;
+        display: block;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block admin_content %}
+<div class="admin-header">
+    <h1>{% if isEdit %}Edit{% else %}Create{% endif %} Event</h1>
+</div>
+
+<div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+    {% if errors is not empty %}
+    <div
+        style="background: #fee; border: 1px solid #fcc; color: #c00; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <strong>Please fix the following errors:</strong>
+        <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+            {% for message in errors %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data" novalidate style="display: grid; gap: 20px;">
+        <div>
+            <label class="form-label {% if errors.nom|default(false) %}text-danger{% endif %}">Event Name</label>
+            <input type="text" name="nom" value="{{ event.nom|default('') }}"
+                class="form-control {% if errors.nom|default(false) %}is-invalid{% endif %}">
+            {% if errors.nom|default(false) %}<span class="error-message">{{ errors.nom }}</span>{% endif %}
+        </div>
+
+        <div>
+            <label
+                class="form-label {% if errors.description|default(false) %}text-danger{% endif %}">Description</label>
+            <textarea name="description" rows="5"
+                class="form-control {% if errors.description|default(false) %}is-invalid{% endif %}">{{ event.description|default('') }}</textarea>
+            {% if errors.description|default(false) %}<span class="error-message">{{ errors.description }}</span>{%
+            endif %}
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <label class="form-label {% if errors.dateDebut|default(false) %}text-danger{% endif %}">Start
+                    Date</label>
+                <input type="datetime-local" name="dateDebut"
+                    value="{% if event.dateDebut %}{{ event.dateDebut|date('Y-m-d\\TH:i') }}{% endif %}"
+                    class="form-control {% if errors.dateDebut|default(false) %}is-invalid{% endif %}">
+                {% if errors.dateDebut|default(false) %}<span class="error-message">{{ errors.dateDebut }}</span>{%
+                endif %}
+            </div>
+
+            <div>
+                <label class="form-label {% if errors.dateFin|default(false) %}text-danger{% endif %}">End Date</label>
+                <input type="datetime-local" name="dateFin"
+                    value="{% if event.dateFin %}{{ event.dateFin|date('Y-m-d\\TH:i') }}{% endif %}"
+                    class="form-control {% if errors.dateFin|default(false) %}is-invalid{% endif %}">
+                {% if errors.dateFin|default(false) %}<span class="error-message">{{ errors.dateFin }}</span>{% endif %}
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <label class="form-label {% if errors.lieu|default(false) %}text-danger{% endif %}">Location</label>
+                <input type="text" name="lieu" value="{{ event.lieu|default('') }}"
+                    class="form-control {% if errors.lieu|default(false) %}is-invalid{% endif %}">
+                {% if errors.lieu|default(false) %}<span class="error-message">{{ errors.lieu }}</span>{% endif %}
+            </div>
+
+            <div>
+                <label class="form-label {% if errors.capacite|default(false) %}text-danger{% endif %}">Capacity</label>
+                <input type="number" name="capacite" value="{{ event.capacite|default('0') }}"
+                    class="form-control {% if errors.capacite|default(false) %}is-invalid{% endif %}">
+                {% if errors.capacite|default(false) %}<span class="error-message">{{ errors.capacite }}</span>{% endif
+                %}
+            </div>
+        </div>
+
+        <div>
+            <label class="form-label">Event Image</label>
+            <input type="file" name="image" accept="image/*" class="form-control">
+            {% if event.image %}<p style="margin: 8px 0; font-size: 0.85rem; color: #666;">Current: {{ event.image }}
+            </p>{% endif %}
+        </div>
+
+        <div>
+            <label class="form-label">Sponsors</label>
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; max-height: 200px; overflow-y: auto; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                {% for sponsor in sponsors %}
+                <label style="display: flex; align-items: center; gap: 8px; padding: 5px; cursor: pointer;">
+                    <input type="checkbox" name="sponsors[]" value="{{ sponsor.id }}" {% if
+                        event.sponsors.contains(sponsor) %}checked{% endif %}>
+                    <span>{{ sponsor.nom }}</span>
+                </label>
+                {% else %}
+                <p style="color: #666; grid-column: 1 / -1;">No sponsors available. <a
+                        href="{{ path('admin_sponsors_new') }}">Create one</a></p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button type="submit" class="admin-btn">{% if isEdit %}Update{% else %}Create{% endif %} Event</button>
+            <a href="{{ path('admin_events_index') }}" class="admin-btn admin-btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

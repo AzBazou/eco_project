@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.title }} - Shop{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="main-wrapper">
+        <main id="primary" class="site-main">
+            <article class="product-single">
+                <div class="product-image">
+                    {% if product.image|default %}
+                        <img src="{{ product.image }}" alt="{{ product.title|default('Product') }}">
+                    {% else %}
+                        <div class="placeholder-image">No Image</div>
+                    {% endif %}
+                </div>
+
+                <div class="product-summary">
+                    <h1 class="product-title">{{ product.title|default('Product') }}</h1>
+
+                    <div class="product-rating">
+                        <span class="stars" data-rating="{{ product.rating|default(0) }}">
+                            {% for i in 1..5 %}
+                                <i class="fas fa-star {% if i <= product.rating %}filled{% endif %}"></i>
+                            {% endfor %}
+                        </span>
+                    </div>
+
+                    <div class="product-price">
+                        <span class="price">${{ product.price|default(0) }}</span>
+                    </div>
+
+                    <div class="product-description">
+                        {{ product.description|default('No description available') }}
+                    </div>
+
+                    <form class="add-to-cart-form" method="post">
+                        <div class="quantity-selector">
+                            <label for="quantity">Quantity:</label>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1">
+                        </div>
+
+                        <button type="submit" class="button button-primary">Add to Cart</button>
+                    </form>
+
+                    <div class="product-meta">
+                        {% if product.sku %}
+                            <p><strong>SKU:</strong> {{ product.sku }}</p>
+                        {% endif %}
+                        {% if product.category %}
+                            <p><strong>Category:</strong> {{ product.category }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </article>
+        </main>
+
+        {% include 'partials/sidebar.html.twig' %}
+    </div>
+</div>
+{% endblock %}
